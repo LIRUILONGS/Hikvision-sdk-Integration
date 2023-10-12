@@ -5,9 +5,11 @@ import com.xtj.hikvisionsdkintegration.task.InitSdkTask;
 import com.xtj.hikvisionsdkintegration.util.OSUtils;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.xtj.hikvisionsdkintegration.util.OsSelect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Logger;
 
@@ -31,10 +33,19 @@ public class SdkInitService {
     public SdkInitService() {
         if (hCNetSDK == null) {
             synchronized (HCNetSDK.class) {
+                String strDllPath = "";
                 try {
-                    hCNetSDK = (HCNetSDK) Native.loadLibrary(OSUtils.getLoadLibrary(), HCNetSDK.class);
+                    if (OsSelect.isWindows())
+                        //win系统加载SDK库路径
+                        strDllPath = System.getProperty("user.dir") + File.separator +"sdk"+File.separator +"hklibwin64"+File.separator+"HCNetSDK.dll";
+
+                    else if (OsSelect.isLinux())
+                        //Linux系统加载SDK库路径
+                        strDllPath = "/usr/lib" + File.separator +"sdk"+File.separator +"hkliblinux64"+File.separator+"libhcnetsdk.so";
+                    logger.info("loadLibrary: "+strDllPath);
+                    hCNetSDK = (HCNetSDK) Native.loadLibrary(strDllPath, HCNetSDK.class);
                 } catch (Exception ex) {
-                    logger.severe("SdkInitService-init-hCNetSDK-error");
+                    logger.severe("loadLibrary: " + strDllPath + " Error: " + ex.getMessage());
                 }
             }
         }

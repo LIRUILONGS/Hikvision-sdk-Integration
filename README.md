@@ -110,6 +110,67 @@ snapshot:
 java -jar  hikvision-sdk-integration-0.0.1-SNAPSHOT.jar
 ```
 
+
+### Docker 方式
+
+```bash
+┌──[root@vms81.liruilongs.github.io]-[~/ftpconfig]
+└─$ ls
+Dockerfile  hikvision-sdk-integration-0.0.1-SNAPSHOT.jar  sdk  sdk.tar
+┌──[root@vms81.liruilongs.github.io]-[~/ftpconfig]
+└─$ cat Dockerfile
+
+FROM openjdk:8u102-jdk
+
+COPY ./hikvision-sdk-integration-0.0.1-SNAPSHOT.jar /
+ADD  ./sdk.tar  /usr/lib/
+
+# 设置容器启动时的命令
+CMD ["java", "-jar" ,"hikvision-sdk-integration-0.0.1-SNAPSHOT.jar"]
+┌──[root@vms81.liruilongs.github.io]-[~/ftpconfig]
+└─$
+```
+
+```bash
+docker pull liruilong/hikvision-sdk-config-ftp
+```
+
+
+```bash
+┌──[root@vms81.liruilongs.github.io]-[~/ftpconfig]
+└─$ docker run --rm -it -p 8099:8099 hikvision-sdk-config-ftp:latest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.5.3)
+
+2023-10-12 17:20:41.184  INFO 1 --- [           main] c.x.h.HikvisionSdkIntegrationApplication : Starting HikvisionSdkIntegrationApplication v0.0.1-SNAPSHOT using Java 1.8.0_102 on bbb649e2e354 with PID 1 (/hikvision-sdk-integration-0.0.1-SNAPSHOT.jar started by root in /)
+2023-10-12 17:20:41.186  INFO 1 --- [           main] c.x.h.HikvisionSdkIntegrationApplication : No active profile set, falling back to default profiles: default
+2023-10-12 17:20:42.650  INFO 1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8099 (http)
+2023-10-12 17:20:42.669  INFO 1 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-10-12 17:20:42.669  INFO 1 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.50]
+2023-10-12 17:20:42.764  INFO 1 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+.............
+loop[2] find 2 mac and 0 ip
+2023-10-12 17:20:44.151  INFO 1 --- [pool-1-thread-1] c.x.h.task.InitSdkTask                   : ============== InitSDK init success ====================
+2023-10-12 17:21:02.986  INFO 1 --- [nio-8099-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-10-12 17:21:02.986  INFO 1 --- [nio-8099-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2023-10-12 17:21:02.988  INFO 1 --- [nio-8099-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2023-10-12 17:21:03.243  INFO 1 --- [nio-8099-exec-1] c.x.h.controller.ConfigController        : userId=0
+2023-10-12 17:21:03.286  INFO 1 --- [nio-8099-exec-1] c.x.h.controller.ConfigController        : 获取参数成功
+2023-10-12 17:21:03.287  INFO 1 --- [nio-8099-exec-1] c.x.h.controller.ConfigController        : ===========================  设备信息  ============================
+2023-10-12 17:21:03.287  INFO 1 --- [nio-8099-exec-1] c.x.h.controller.ConfigController        : 设备名称:IP CAMERA 设备序列号：DS-IPC-B12HV2-IA20210812AACHG51171281
+2023-10-12 17:21:03.287  INFO 1 --- [nio-8099-exec-1] c.x.h.controller.ConfigController        : 设备型号名称:DS-IPC-B12HV2-IA 设备 型号：31
+2023-10-12 17:21:03.287  INFO 1 --- [nio-8099-exec-1] c.x.h.controller.ConfigController        : 模拟通道个数：1
+2023-10-12 17:21:03.289  INFO 1 --- [nio-8099-exec-1] c.x.h.controller.ConfigController        : 软件版本号：[firstVersion:5, secondVersion:5, lowVersion:34]
+2023-10-12 17:21:03.289  INFO 1 --- [nio-8099-exec-1] c.x.h.controller.ConfigController        : 软件生成日期：Build:2021.7.14
+```
+
+
 ### 海康 SDK 使用
 
 开发手册，动态库下载：

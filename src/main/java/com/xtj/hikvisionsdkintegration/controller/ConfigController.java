@@ -136,6 +136,7 @@ public class ConfigController {
             //登录
             Integer userId = login(m_sDeviceIP);
             logger.info("userId=" + userId);
+            getCfg(userId);
             hashMap.put(m_sDeviceIP, getFtpStatus(userId));
             if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
                 logger.info("注销成功 userId：" + userId);
@@ -158,6 +159,7 @@ public class ConfigController {
         for (String m_sDeviceIP : ips) {
             //登录
             Integer userId = login(m_sDeviceIP);
+            getCfg(userId);
             hashMap.put(m_sDeviceIP, getFtpStatus(userId));
             if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
                 logger.info("注销成功 userId：" + userId);
