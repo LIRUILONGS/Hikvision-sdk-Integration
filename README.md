@@ -202,6 +202,16 @@ java -jar  hikvision-sdk-integration-0.0.1-SNAPSHOT.jar
 编写功能业务
 
 
+Demo 参考：
+
+***
+
+https://open.hikvision.com/download/5cda567cf47ae80dd41a54b3?type=10&id=5cda5902f47ae80dd41a54b7
+
+https://gitee.com/naylor_personal/ramble-spring-boot/tree/master/hikvision-sdk-integration
+***
+
+
 
 
 
