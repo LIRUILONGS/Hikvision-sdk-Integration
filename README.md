@@ -105,7 +105,7 @@ snapshot:
 
 ### 部署
 
-当前 SDK 没办法打包进去，时间关系没有在看，没有测试 Linux 环境， window 下需要把SDK 包和 当前项目 jar 包放到同一级目录
+当前 SDK ， `window` 下需要把SDK 包和 当前项目 jar 包放到同一级目录, `Linux` 需放到 `/usr/lib/` 下面
 ```bash
 java -jar  hikvision-sdk-integration-0.0.1-SNAPSHOT.jar
 ```
