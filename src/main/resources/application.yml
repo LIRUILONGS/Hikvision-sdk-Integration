@@ -2,24 +2,6 @@ server:
   port: 8099
 
 
-
-spring:
-  datasource:
-    url: jdbc:mysql://192.168.26.55:3306/xtj_monitor?useUnicode=true&characterEncoding=utf8
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  http:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
-
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
 logging:
   level:
     org:
