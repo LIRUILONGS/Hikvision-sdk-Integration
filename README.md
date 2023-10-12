@@ -62,7 +62,7 @@ curl --location --request POST 'http://127.0.0.1:8099/config/ftp/status' \
 
 提供了 swagger UI ,接口文档,可以直接调用
 
-[swagger UI ](./file/20231012024029.png)
+![swagger UI ](./file/20231012024029.png)
 
 
 ### 配置说明
