@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -68,7 +69,7 @@ public class ConfigController {
     public GlobalResponseEntity<Object> getSdkState(@PathVariable String m_sDeviceIP) {
         //登录
         Integer userId = login(m_sDeviceIP);
-        logger.info("userId=" + userId);
+        logger.info("IP:"+m_sDeviceIP +" userId=" + userId);
         getCfg(userId);
         getFtpCfg(userId);
         getCapturePlan(userId);
@@ -88,16 +89,23 @@ public class ConfigController {
     @GetMapping("/ftp")
     public GlobalResponseEntity<String> getFTPConfig(@RequestParam("ips") String[] ips) {
         //登录
+        ArrayList<String> objectArrayList = new ArrayList<>();
         for (String m_sDeviceIP : ips) {
             //登录
             Integer userId = login(m_sDeviceIP);
-            logger.info("userId=" + userId);
-            getCfg(userId);
-            getFtpCfg(userId);
-            getCapturePlan(userId);
-            getSnapshotConfiguration(userId);
-            if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
-                logger.info("注销成功 userId：" + userId);
+            logger.info("IP:"+m_sDeviceIP +" userId=" + userId);
+            if (Objects.nonNull(userId)){
+                getCfg(userId);
+                getFtpCfg(userId);
+                getCapturePlan(userId);
+                getSnapshotConfiguration(userId);
+                if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
+                    logger.info("注销成功 userId：" + userId);
+                }
+                //objectArrayList.add( " --配置成功--"+ m_sDeviceIP);
+
+            }else {
+                objectArrayList.add(  " @--配置失败--@"+ m_sDeviceIP);
             }
 
         }
@@ -113,20 +121,90 @@ public class ConfigController {
             "]")
     @PostMapping("/ftp")
     public GlobalResponseEntity<String> getFTPPostConfig(@RequestBody String[] ips) {
+        ArrayList<String> objectArrayList = new ArrayList<>();
         for (String m_sDeviceIP : ips) {
             Integer userId = login(m_sDeviceIP);
-            logger.info("userId=" + userId);
-            getCfg(userId);
-            getFtpCfg(userId);
-            getCapturePlan(userId);
-            getSnapshotConfiguration(userId);
-            if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
-                logger.info("注销成功 userId：" + userId);
+            logger.info("IP:"+m_sDeviceIP +" userId=" + userId);
+            if (Objects.nonNull(userId)){
+                getCfg(userId);
+                getFtpCfg(userId);
+                getCapturePlan(userId);
+                getSnapshotConfiguration(userId);
+                if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
+                    logger.info("注销成功 userId：" + userId);
+                }
+                //objectArrayList.add( " --配置成功--"+ m_sDeviceIP);
+
+            }else {
+                objectArrayList.add(  " @--配置失败--@"+ m_sDeviceIP);
             }
+
         }
-            return GlobalResponseEntity.success(JSON.toJSONString(null));
+            return GlobalResponseEntity.success(JSON.toJSONString(objectArrayList));
 
     }
+
+
+    @ApiOperation(value = "多个FTP 开启", notes = " [\n" +
+            "    \"192.168.1.143\",\n" +
+            "    \"192.168.1.141\",\n" +
+            "    \"192.168.1.142\"\n" +
+            "]")
+    @PostMapping("/ftpopen")
+    public GlobalResponseEntity<String> getFTPPostConfigOPen(@RequestBody String[] ips) {
+        ArrayList<String> objectArrayList = new ArrayList<>();
+        for (String m_sDeviceIP : ips) {
+            Integer userId = login(m_sDeviceIP);
+            logger.info("IP:"+m_sDeviceIP +" userId=" + userId);
+            if (Objects.nonNull(userId)){
+                getCfg(userId);
+                getFtpCfgAll(userId, (byte) 1);
+                getCapturePlan(userId);
+                getSnapshotConfiguration(userId);
+                if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
+                    logger.info("注销成功 userId：" + userId);
+                }
+                //objectArrayList.add( " --配置成功--"+ m_sDeviceIP);
+
+            }else {
+                objectArrayList.add(  " @--配置失败--@"+ m_sDeviceIP);
+            }
+
+        }
+        return GlobalResponseEntity.success(JSON.toJSONString(objectArrayList));
+
+    }
+
+    @ApiOperation(value = "多个FTP 关闭", notes = " [\n" +
+            "    \"192.168.1.143\",\n" +
+            "    \"192.168.1.141\",\n" +
+            "    \"192.168.1.142\"\n" +
+            "]")
+    @PostMapping("/ftpclose")
+    public GlobalResponseEntity<String> getFTPPostConfigClose(@RequestBody String[] ips) {
+        ArrayList<String> objectArrayList = new ArrayList<>();
+        for (String m_sDeviceIP : ips) {
+            Integer userId = login(m_sDeviceIP);
+            logger.info("IP:"+m_sDeviceIP +" userId=" + userId);
+            if (Objects.nonNull(userId)){
+                getCfg(userId);
+                getFtpCfgAll(userId, (byte) 0);
+                getCapturePlan(userId);
+                getSnapshotConfiguration(userId);
+                if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
+                    logger.info("注销成功 userId：" + userId);
+                }
+                //objectArrayList.add( " --配置成功--"+ m_sDeviceIP);
+
+            }else {
+                objectArrayList.add(  " @--配置失败--@"+ m_sDeviceIP);
+            }
+
+        }
+        return GlobalResponseEntity.success(JSON.toJSONString(objectArrayList));
+
+    }
+
 
     @ApiOperation(value = "多个FTP 状态查看", notes = "http://127.0.0.1:8099/ftp/status?ips=192.168.1.143,192.168.1.141,192.168.1.142")
     @GetMapping("/ftp/status")
@@ -135,11 +213,15 @@ public class ConfigController {
         for (String m_sDeviceIP : ips) {
             //登录
             Integer userId = login(m_sDeviceIP);
-            logger.info("userId=" + userId);
-            getCfg(userId);
-            hashMap.put(m_sDeviceIP, getFtpStatus(userId));
-            if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
-                logger.info("注销成功 userId：" + userId);
+            logger.info("IP:"+m_sDeviceIP +" userId=" + userId);
+            if (Objects.nonNull(userId)){
+                getCfg(userId);
+                hashMap.put(m_sDeviceIP, getFtpStatus(userId));
+                if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
+                    logger.info("注销成功 userId：" + userId);
+                }
+            }else {
+                hashMap.put(m_sDeviceIP, -1);
             }
         }
         return GlobalResponseEntity.success(JSON.toJSON(hashMap));
@@ -159,15 +241,77 @@ public class ConfigController {
         for (String m_sDeviceIP : ips) {
             //登录
             Integer userId = login(m_sDeviceIP);
-            getCfg(userId);
-            hashMap.put(m_sDeviceIP, getFtpStatus(userId));
-            if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
-                logger.info("注销成功 userId：" + userId);
+            logger.info("IP:"+m_sDeviceIP +" userId=" + userId);
+            if (Objects.nonNull(userId)){
+                getCfg(userId);
+                hashMap.put(m_sDeviceIP, getFtpStatus(userId));
+                if (SdkInitService.hCNetSDK.NET_DVR_Logout(userId)) {
+                    logger.info("注销成功 userId：" + userId);
+                }
+            }else {
+                hashMap.put(m_sDeviceIP, -1);
             }
+
         }
         return GlobalResponseEntity.success(JSON.toJSON(hashMap));
 
     }
+
+
+    public boolean getFtpCfgAll(int lUserID,byte byEnableFTP) {
+        HCNetSDK.NET_DVR_FTP_TYPE m_struFtpCond = new HCNetSDK.NET_DVR_FTP_TYPE();
+        m_struFtpCond.byType = 0;
+        m_struFtpCond.write();
+
+        HCNetSDK.NET_DVR_FTPCFG_V40 m_struFTPCfg = new HCNetSDK.NET_DVR_FTPCFG_V40();
+        m_struFTPCfg.write();
+
+        IntByReference dwStatus = new IntByReference(0);
+        Pointer lpStatus = dwStatus.getPointer();
+
+        if (false == SdkInitService.hCNetSDK.NET_DVR_GetDeviceConfig(lUserID, HCNetSDK.NET_DVR_GET_FTPCFG_V40, 1,
+                m_struFtpCond.getPointer(), m_struFtpCond.size(), lpStatus, m_struFTPCfg.getPointer(),
+                m_struFTPCfg.size())) {
+            logger.severe("NET_DVR_GET_FTPCFG_V40 failed, error code:" + SdkInitService.hCNetSDK.NET_DVR_GetLastError());
+            return Boolean.FALSE;
+        } else {
+            m_struFTPCfg.read();
+
+            if (m_struFTPCfg.byAddresType == 0) {
+                m_struFTPCfg.unionServer.setType(HCNetSDK.STRUCT_SELF_IP.class);
+                m_struFTPCfg.unionServer.read();
+                logger.info("NET_DVR_GET_FTPCFG_V40 succ, FTP服务器地址:" +
+                        new String(m_struFTPCfg.unionServer.struAddrIP.struIp.sIpV4).trim() +
+                        ", FTP服务器端口:" + m_struFTPCfg.wFTPPort + "摄像头FTP 状态：" + m_struFTPCfg.byEnableFTP);
+            }
+
+            m_struFTPCfg.byEnableFTP = byEnableFTP ; //是否启动ftp上传功能：0- 否，1- 是
+            m_struFTPCfg.byPicArchivingInterval = 2;
+            m_struFTPCfg.byAddresType = 0;
+            m_struFTPCfg.byEnableAnony = 0;
+            m_struFTPCfg.szUserName = ftpUsername.getBytes();
+            m_struFTPCfg.szPassWORD = ftpPassword.getBytes();
+            m_struFTPCfg.szTopCustomDir = custdir.getBytes();
+            m_struFTPCfg.unionServer.setType(HCNetSDK.STRUCT_SELF_IP.class);
+            m_struFTPCfg.unionServer.struAddrIP.struIp.sIpV4 = new byte[16];
+            System.arraycopy(serverIP.getBytes(), 0, m_struFTPCfg.unionServer.struAddrIP.struIp.sIpV4, 0, serverIP.length());
+            m_struFTPCfg.wFTPPort = wFTPPort;
+            m_struFTPCfg.write();
+
+            if (false == SdkInitService.hCNetSDK.NET_DVR_SetDeviceConfig(lUserID, HCNetSDK.NET_DVR_SET_FTPCFG_V40, 1,
+                    m_struFtpCond.getPointer(), m_struFtpCond.size(), lpStatus, m_struFTPCfg.getPointer(),
+                    m_struFTPCfg.size())) {
+                logger.severe("FTP 配置失败, error code:" + SdkInitService.hCNetSDK.NET_DVR_GetLastError());
+                return Boolean.FALSE;
+            } else {
+                logger.info("FTP 配置成功!");
+                logger.info("是否启动ftp上传功能：0- 否，1- 是   " + m_struFTPCfg.byEnableFTP);
+            }
+
+        }
+        return Boolean.TRUE;
+    }
+
 
 
     public boolean getFtpCfg(int lUserID) {
